@@ -1,0 +1,37 @@
+import Data.Time.Clock.POSIX
+
+sieve :: Int -> [Int]
+sieve n
+    | n < 2     = []
+    | otherwise = sieveMethod [2..n] []
+
+sieveMethod :: [Int] -> [Int] -> [Int]
+sieveMethod [] primes = reverse primes
+sieveMethod (x:xs) primes
+    | x < 2     = sieveMethod xs primes
+    | otherwise = sieveMethod (filter (\y -> y `mod` x /= 0) xs) (x:primes)
+
+main :: IO ()
+main = do
+    putStrLn "Enter an upper limit for prime generation:"
+    input <- getLine
+    startTimeFunction <- getPOSIXTime
+    let limit = read input :: Int
+    let primes = sieve limit
+    let arrayLength = length primes
+    startTimePrinting <- getPOSIXTime
+    putStrLn $ "Primes up to " ++ show limit ++ ": " ++ show primes
+    endTimeFunction <- getPOSIXTime
+    let functionDuration = endTimeFunction - startTimeFunction
+    let printingDuration = endTimeFunction - startTimePrinting
+    let calcPrime = functionDuration - printingDuration
+
+    putStrLn $ "\nThe full function took " ++ show functionDuration ++ " seconds to run"
+    putStrLn $ "The printing took " ++  show printingDuration ++ " seconds" 
+    putStrLn $ "Calculating everything for prime took " ++ show calcPrime ++ " seconds"
+    
+    putStrLn $ "The start time for the function is " ++ show startTimeFunction
+    putStrLn $ "The start time for the printing is " ++ show startTimePrinting
+    putStrLn $ "The end time for printing and the function is " ++ show endTimeFunction
+
+    putStrLn $ "The length of the array is " ++ show arrayLength
